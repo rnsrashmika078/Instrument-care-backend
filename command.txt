@@ -1,0 +1,6 @@
+composer init
+mkdir -p app/{controller,model,views} config public routes
+touch public/index.php
+touch routes/web.php
+
+// composer dump-autoload

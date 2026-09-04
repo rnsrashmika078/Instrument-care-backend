@@ -1,0 +1,16 @@
+{
+    "name": "rashm/instrument-care-refine",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/",
+            "Rashm\\InstrumentCareRefine\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Rashmika Siriwardhana",
+            "email": "58144396+rnsrashmika078@users.noreply.github.com"
+        }
+    ],
+    "require": {}
+}
