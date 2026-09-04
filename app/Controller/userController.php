@@ -3,8 +3,12 @@
 namespace App\Controller;
 
 use App\Core\Response;
+use App\Exceptions\NotFoundException;
+use App\DTOs\CreateUserDTO;
 use App\Repository\UserRepository;
 use PDOException;
+use App\Validation\UserValidator;
+
 
 class UserController
 {
@@ -37,42 +41,54 @@ class UserController
 
     public function store(): void
     {
-        try {
-            $payload = $_POST;
+        $payload = json_decode(
+            file_get_contents('php://input'),
+            true
+        );
+
+        if (!is_array($payload)) {
             Response::json([
-                'message' => 'User creation is not implemented yet.',
-                'payload' => $payload,
-            ], 501);
-        } catch (PDOException $e) {
-            Response::json([
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'Invalid request body'
+            ], 400);
         }
+        $errors = UserValidator::validate($payload);
+
+
+        if (!empty($errors)) {
+            Response::json([
+                'message' => 'Validation failed',
+                'errors' => $errors
+            ], 422);
+        }
+        $user = new CreateUserDTO(
+            userTypeId: (int) $payload['user_type_id'],
+            firstName: $payload['first_name'] ?? null,
+            lastName: $payload['last_name'] ?? null,
+            username: $payload['username']
+        );
+
+        $this->userRepository->createUser($user);
+
+        Response::json([
+            'message' => 'New User Created!',
+        ], 201);
     }
 
     public function find(): void
     {
-        try {
-            $username = $_GET['username'] ?? null;
-            if (!$username) {
-                Response::json([
-                    'message' => 'Username is required',
-                ], 400);
-            }
-            $user = $this->userRepository->findByUserName($username);
-            if ($user === null) {
-                Response::json([
-                    'message' => 'user not found',
-                ], 404);
-            }
-
+        $username = $_GET['username'] ?? null;
+        if (!$username) {
             Response::json([
-                'data' => $user,
-            ]);
-        } catch (PDOException $e) {
-            Response::json([
-                'message' => $e->getMessage(),
-            ], 500);
+                'message' => 'Username is required',
+            ], 400);
         }
+        $user = $this->userRepository->findByUserName($username);
+        if ($user === null) {
+            throw new NotFoundException('User not found!');
+        }
+
+        Response::json([
+            'data' => $user,
+        ]);
     }
 }
