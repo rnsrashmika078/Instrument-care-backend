@@ -8,5 +8,6 @@ class CreateUserDTO
         public ?string $firstName,
         public ?string $lastName,
         public string $username,
+        public string $password,
     ) {}
 }

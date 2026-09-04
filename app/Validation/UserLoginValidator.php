@@ -2,20 +2,11 @@
 
 namespace App\Validation;
 
-
-class UserValidator
+class UserLoginValidator
 {
     public static function validate(array $data): array
     {
         $errors = [];
-
-        if (empty($data['first_name'])) {
-            $errors['first_name'] = 'First name is required';
-        }
-
-        if (empty($data['last_name'])) {
-            $errors['last_name'] = 'Last name is required';
-        }
 
         if (empty($data['username'])) {
             $errors['username'] = 'Username is required';

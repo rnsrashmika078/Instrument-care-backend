@@ -12,5 +12,8 @@
             "email": "58144396+rnsrashmika078@users.noreply.github.com"
         }
     ],
-    "require": {}
+    "require": {
+        "firebase/php-jwt": "^7.1",
+        "vlucas/phpdotenv": "^5.7"
+    }
 }
