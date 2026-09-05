@@ -28,7 +28,10 @@ class Router
             '',
             $uri
         );
-
+        // var_dump($_SERVER['REQUEST_METHOD']);
+        // var_dump($_SERVER['REQUEST_URI']);
+        // var_dump($uri);
+        // exit;
         $route = $this->routes[$method][$uri] ?? null;
 
         if ($route === null) {

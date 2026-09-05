@@ -31,7 +31,8 @@ class AuthController
 
         if (!is_array($payload)) {
             Response::json([
-                'message' => 'Invalid request body'
+                'message' => 'Invalid request body',
+                'success' => false,
             ], 400);
         }
         $errors = UserLoginValidator::validate($payload);
@@ -39,7 +40,8 @@ class AuthController
         if (!empty($errors)) {
             Response::json([
                 'message' => 'Validation failed',
-                'errors' => $errors
+                'errors' => $errors,
+                'success' => false,
             ], 422);
         }
         $username = $payload['username'];
@@ -51,13 +53,15 @@ class AuthController
 
         if (empty($user)) {
             Response::json([
-                'message' => 'User Not Found!'
+                'message' => 'User Not Found!',
+                'success' => false,
             ], 404);
         }
 
         if (!$user || !password_verify($password, $user['password'])) {
             Response::json([
-                'message' => 'Invalid credentials'
+                'success' => false,
+                'message' => 'Invalid credentials',
             ], 401);
         }
 
@@ -70,10 +74,10 @@ class AuthController
             'samesite' => 'Lax',
             'path' => '/',
         ]);
-        
+
         Response::json([
             'message' => 'User logged in successfully!',
-            // 'token' => $token,
+            'success' => true,
             'user' => UserDTO::fromArray($user)
         ], 200);
     }
@@ -138,13 +142,19 @@ class AuthController
         // $headers = getallheaders();
         // $header = $headers['Authorization'] ?? '';
 
-        var_dump(getallheaders());
+        // var_dump(getallheaders());
         // if (!preg_match('/Bearer\s+(.*)$/i', $header, $matches)) {
         //     Response::json([
         //         'message' => 'Unauthenticated'
         //     ], 401);
         // }
         $token = $_COOKIE['token'];
+
+        if (!$token) {
+            Response::json([
+                'message' => 'Unauthorized!'
+            ], 401);
+        }
 
 
         $payload = Jwt::decode($token);
