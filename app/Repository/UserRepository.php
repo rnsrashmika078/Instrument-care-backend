@@ -55,19 +55,28 @@ class UserRepository
 
         return $user ?: null;
     }
-    public function createUser(CreateUserDTO $user): void
+    public function createUser(CreateUserDTO $user): ?array
     {
         try {
-            $sql = "INSERT INTO users ( user_type_id, first_name,last_name,username, password) VALUES (?,?,?,?,?)";
+            $sql = "INSERT INTO users ( user_type_id, first_name,last_name,email,phone_number,username,password) VALUES (?,?,?,?,?,?,?)";
             $stmt = $this->pdo->prepare($sql);
 
             $stmt->execute([
                 $user->userTypeId,
                 $user->firstName,
                 $user->lastName,
+                $user->email,
+                $user->phoneNumber,
                 $user->username,
                 $user->password,
             ]);
+
+            return [
+                'user_type_id' => $user->userTypeId,
+                'first_name' => $user->firstName,
+                'last_name' => $user->lastName,
+                'username' => $user->username,
+            ];
         } catch (PDOException $e) {
             Response::json([
                 'message' => $e->getMessage(),

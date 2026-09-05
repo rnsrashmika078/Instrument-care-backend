@@ -16,9 +16,12 @@ class UserRegisterValidator
         if (empty($data['last_name'])) {
             $errors['last_name'] = 'Last name is required';
         }
+        if (empty($data['email'])) {
+            $errors['email'] = 'Email is required';
+        }
 
-        if (empty($data['username'])) {
-            $errors['username'] = 'Username is required';
+        if (empty($data['phone_number'])) {
+            $errors['username'] = 'Phone number is required';
         }
 
         if (empty($data['password'])) {

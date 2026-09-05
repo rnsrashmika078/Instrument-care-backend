@@ -102,8 +102,7 @@ class AuthController
                 'errors' => $errors
             ], 422);
         }
-        $username = $payload['username'];
-        $exists = $this->userRepository->findByUserName($username);
+        $exists = $this->userRepository->findByUserName($payload['email']);
 
         if (!empty($exists)) {
             Response::json([
@@ -113,7 +112,7 @@ class AuthController
         //hash the password
 
         $hashedPassword = password_hash($payload['password'], PASSWORD_BCRYPT);
-        $token = Jwt::generate($payload['username']);
+        $token = Jwt::generate($payload['email']);
 
         setcookie('token', $token, [
             'expires' => time() + 3600,
@@ -122,18 +121,19 @@ class AuthController
             'samesite' => 'Lax',
             'path' => '/',
         ]);
-        $user = new CreateUserDTO(
-            userTypeId: (int) $payload['user_type_id'],
+        $createUserDTO = new CreateUserDTO(
+            userTypeId: (int) 9,
             firstName: $payload['first_name'] ?? null,
             lastName: $payload['last_name'] ?? null,
-            username: $payload['username'],
+            phoneNumber: (int) $payload['phone_number'],
+            email: $payload['email'],
+            username: $payload['email'],
             password: $hashedPassword
         );
-
-        $this->userRepository->createUser($user);
-
+        $createdUser = $this->userRepository->createUser($createUserDTO);
         Response::json([
             'message' => 'New User Created!',
+            'user' => $createdUser
             // 'token' => $token
         ], 201);
     }

@@ -23,4 +23,13 @@ class UserDTO
             username: $user['username'],
         );
     }
+    public function toArray(): array
+    {
+        return [
+            'userTypeId' => $this->userTypeId,
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'username' => $this->username,
+        ];
+    }
 }
